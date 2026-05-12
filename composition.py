@@ -25,61 +25,102 @@ def call_composition_api(prompt):
         contents=prompt
     )
 
-def compose_email(evaluations_file):
-    composition_prompt_path = Path("prompts/email_composition.md")
-    composition_template = composition_prompt_path.read_text()
+def format_company_block(e):
+    sources_md = []
+    for s in e.get("sources", []):
+        sources_md.append(f"[{s}]({s})")
     
-    with open(evaluations_file, "r") as f:
-        evaluations = json.load(f)
-    
-    # Prepare metadata for the prompt
-    today = date.today().isoformat()
-    run_id = f"{today}-run"
-    
-    # Strip unnecessary noise to keep the prompt focused and within safe limits
-    filtered_evals = []
-    out_of_scope_count = 0
-    for e in evaluations:
-        if not e.get("in_scope"):
-            out_of_scope_count += 1
-        filtered_e = {k: v for k, v in e.items() if k not in ['search_queries_used', 'verification_gaps']}
-        filtered_evals.append(filtered_e)
+    return f"""
+---
 
-    input_data = {
-        "run_metadata": {
-            "run_id": run_id,
-            "run_date": today,
-            "companies_investigated": len(evaluations),
-            "companies_excluded": out_of_scope_count
-        },
-        "evaluations": filtered_evals
-    }
-    
-    final_prompt = composition_template
-    final_prompt += f"\n\nINPUT DATA:\n{json.dumps(input_data, indent=2)}"
-    
-    print(f"Composing final email (Filtered input: {len(final_prompt)} chars)...")
-    
+**{e.get('company_name')}** — {e.get('hq_country')} · {e.get('industry_primary')} · Tier {e.get('asia_tier')} · {e.get('company_size')}
+
+**Why it fits:** {e.get('why_it_fits')}
+
+**Confidence:** {e.get('confidence')} — {e.get('confidence_reason')}
+
+**Role archetypes likely present:** {", ".join(e.get('role_archetypes_likely', []))}
+
+**Flags:** {", ".join(e.get('flags', [])) if e.get('flags') else "None"}
+
+**Suggested next action:** {e.get('suggested_next_action')}
+
+**Sources:** {", ".join(sources_md)}
+
+---
+"""
+
+def compose_email(evaluations_file):
     try:
-        response = client.models.generate_content(
-            model='gemini-2.5-flash',
-            contents=final_prompt
-        )
-        print("[+] Received response from Gemini.")
-        email_content = response.text
+        with open(evaluations_file, "r") as f:
+            evaluations = json.load(f)
+        
+        today = date.today().isoformat()
+        
+        # 1. Generate Lede with Gemini
+        print("[*] Generating Lede with Gemini...")
+        in_scope = [e for e in evaluations if e.get("in_scope") and e.get("asia_tier") in ["A", "B"]]
+        watch_list = [e for e in evaluations if e.get("in_scope") and e.get("asia_tier") == "C"]
+        
+        lede_prompt_template = Path("prompts/email_lede.md").read_text()
+        lede_input = lede_prompt_template.replace("[DATE]", today)
+        lede_input = lede_input.replace("[TOTAL]", str(len(evaluations)))
+        lede_input = lede_input.replace("[IN_SCOPE_NAMES]", ", ".join([e['company_name'] for e in in_scope]))
+        lede_input = lede_input.replace("[WATCH_LIST_NAMES]", ", ".join([e['company_name'] for e in watch_list]))
+        
+        lede_response = client.models.generate_content(model='gemini-2.5-flash', contents=lede_input)
+        lede_text = lede_response.text
+        
+        # 2. Format Company Blocks with Python
+        print("[*] Formatting company blocks with Python...")
+        in_scope_html = "\n".join([format_company_block(e) for e in in_scope])
+        watch_list_html = "\n".join([format_company_block(e) for e in watch_list])
+        
+        # 3. Generate Quality Notes with Gemini
+        print("[*] Generating Quality Notes with Gemini...")
+        notes_prompt_template = Path("prompts/email_notes.md").read_text()
+        all_gaps = []
+        for e in evaluations:
+            if e.get("verification_gaps"):
+                all_gaps.append(f"{e['company_name']}: {', '.join(e['verification_gaps'])}")
+        
+        out_of_scope_count = len([e for e in evaluations if not e.get("in_scope")])
+        
+        notes_input = notes_prompt_template.replace("[TOTAL]", str(len(evaluations)))
+        notes_input = notes_input.replace("[EXCLUDED_COUNT]", str(out_of_scope_count))
+        notes_input = notes_input.replace("[GAPS_TEXT]", "\n".join(all_gaps[:10])) # Cap to avoid long prompts
+        
+        notes_response = client.models.generate_content(model='gemini-2.5-flash', contents=notes_input)
+        notes_text = notes_response.text
+        
+        # 4. Assemble Final Email
+        final_email = f"""# Career Compass — Week of {today}
+
+{lede_text}
+
+## In-Scope Opportunities (Tier A & B)
+{in_scope_html if in_scope else "No new Tier A or B companies found this week."}
+
+## Watch List (Tier C)
+{watch_list_html if watch_list else "No Tier C companies this week."}
+
+{notes_text}
+
+---
+Full evaluation data for this run is saved in `data/runs/evaluations_{today}.json`
+"""
         
         output_path = Path(f"outputs/email_{today}.md")
         output_path.parent.mkdir(parents=True, exist_ok=True)
-        output_path.write_text(email_content)
+        output_path.write_text(final_email)
         
-        print(f"Email composed and saved to: {output_path}")
-        
-        # New: Update Dashboard data
+        # Update Dashboard data
         dashboard_data_path = Path("dashboard/data.js")
+        input_data = {"run_metadata": {"run_date": today, "count": len(evaluations)}, "evaluations": evaluations}
         with open(dashboard_data_path, "w") as dj:
             dj.write(f"const dashboardData = {json.dumps(input_data, indent=2)};")
-        print(f"Dashboard data updated at: {dashboard_data_path}")
-
+            
+        print(f"[+] Email composed successfully: {output_path}")
         return output_path
 
     except Exception as e:
