@@ -71,18 +71,34 @@ def evaluate_company(candidate):
         print(f"An error occurred in Evaluation for {candidate['company_name']}: {e}")
         return None
 
+from concurrent.futures import ThreadPoolExecutor, as_completed
+
 def run_all_evaluations(candidates_file):
     with open(candidates_file, "r") as f:
         candidates = json.load(f)
         
     results = []
+    total = len(candidates)
     
-    # Process one by one to avoid quota issues
-    for i, candidate in enumerate(candidates):
-        print(f"\n[{i+1}/{len(candidates)}] Evaluating {candidate['company_name']}...")
-        result = evaluate_company(candidate)
-        if result:
-            results.append(result)
+    print(f"\n[+] Starting parallel evaluation of {total} companies (Max 5 at a time)...")
+    
+    # Process in parallel using a ThreadPoolExecutor
+    with ThreadPoolExecutor(max_workers=5) as executor:
+        # Create a mapping of future to candidate name for logging
+        future_to_company = {executor.submit(evaluate_company, c): c['company_name'] for c in candidates}
+        
+        completed = 0
+        for future in as_completed(future_to_company):
+            company_name = future_to_company[future]
+            try:
+                result = future.result(timeout=300) # 5 minute timeout per company
+                if result:
+                    results.append(result)
+            except Exception as e:
+                print(f"[-] Evaluation for {company_name} failed or timed out: {e}")
+            
+            completed += 1
+            print(f"[{completed}/{total}] Finished evaluation for {company_name}")
             
     # Save results
     output_dir = Path("data/runs")
