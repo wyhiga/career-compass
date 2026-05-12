@@ -19,9 +19,8 @@ Key facts that affect fit assessment:
 - Japanese national, Tokyo-based, no relocation/visa cost.
 - Cross-functional commercial background spanning shipping, aviation,
   travel, retail, ICT, and food/protein.
-- N2 Japanese is strong but NOT native — flag roles requiring
-  native-level Japanese (legal, government-facing, native-customer-
-  facing) as soft disqualifiers.
+- N2 Japanese is strong but NOT native.
+- BANNED INDUSTRY: Renewable energy, solar, wind, power infrastructure. Disqualify these immediately.
 
 ==================================================================
 THE RUBRIC:
@@ -109,10 +108,10 @@ Return a single JSON object. ALL fields required.
   "company_size": "Large | Mid | Small",
   "employee_count_estimate": 1234,
 
-  "why_it_fits": "4-6 sentences. BANNED: 'Matches CV', 'Wendy has experience', 'Good fit for her background'. REQUIRED: (1) Describe the company's business model and unique value proposition in Japan. (2) Explain exactly how Wendy can contribute value using her specific languages and industry knowledge to solve a business problem (e.g., 'Helping [Company] bridge the gap with Spanish food suppliers' or 'Scaling their shipping operations in APAC using her N2 Japanese'). Be precise, not generic.",
+  "why_it_fits": "Max 3-4 sentences. STRICTLY PROHIBITED: Mentioning Wendy's CV, experience, language skills (Japanese/Spanish), or cultural nuances. I already know her background. REQUIRED: Focus 100% on the company's specific business model in Japan and a concrete commercial opportunity. Example: '[Company] is struggling to compete with Rakuten in the organic sector; your expertise in LatAm sourcing could lower their costs.' Be a business consultant, not a recruiter.",
 
   "confidence": "High | Medium | Low",
-  "confidence_reason": "1-2 sentences explaining why this confidence level. For High: cite the strongest evidence. For Low: name what you couldn't verify.",
+  "confidence_reason": "1-2 sentences explaining why this confidence level.",
 
   "role_archetypes_likely": [
     "2-4 role archetypes from the rubric that this company is likely to have."
@@ -122,7 +121,7 @@ Return a single JSON object. ALL fields required.
     "Soft disqualifiers or caveats. Empty array if none."
   ],
 
-  "suggested_next_action": "ONE specific, high-value action. BANNED: 'Search on LinkedIn for HR', 'Check website'. REQUIRED: Name a specific department (e.g. 'Partnerships', 'Supply Chain'), or a specific project mentioned in news, or the name/role of a real person found in research. If no person is found, suggest a specific message angle related to their recent news.",
+  "suggested_next_action": "ONE specific, high-value action. STRICTLY PROHIBITED: 'Search LinkedIn', 'Check website', 'Look for openings'. REQUIRED: Either provide a specific NAME and ROLE of a person found in search, OR a specific business project/trigger to mention (e.g., 'Reference their new partnership with Mitsui in your outreach'). If you found no specific person or project, provide a 'Cold-reach angle' based on a specific product they are launching.",
 
   "sources": [
     "https://... — full URLs of pages you actually read. Min 2 for High confidence, 1 for Medium/Low."

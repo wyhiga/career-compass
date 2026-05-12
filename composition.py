@@ -94,9 +94,11 @@ def compose_email(evaluations_file):
         notes_text = notes_response.text
         
         # 4. Assemble Final Email
+        import time
+        ts = int(time.time())
         final_email = f"""# 🧭 Career Compass — {today}
 
-[📊 Ver Dashboard Visual](https://wyhiga.github.io/career-compass/dashboard/)
+[📊 Ver Dashboard Visual (Actualizado)](https://wyhiga.github.io/career-compass/dashboard/?t={ts})
 
 {lede_text}
 
