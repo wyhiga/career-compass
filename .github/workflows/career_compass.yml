@@ -40,7 +40,13 @@ jobs:
 
       - name: Get latest email file
         id: get_email
-        run: echo "FILE_PATH=$(ls outputs/email_*.md | tail -n 1)" >> $GITHUB_ENV
+        run: |
+          LATEST_FILE=$(ls -t outputs/email_*.md 2>/dev/null | head -n 1)
+          if [ -z "$LATEST_FILE" ]; then
+            echo "[-] Error: No se encontró ningún archivo de email en la carpeta outputs."
+            exit 1
+          fi
+          echo "FILE_PATH=$LATEST_FILE" >> $GITHUB_ENV
 
       - name: Send Email Notification
         uses: dawidd6/action-send-mail@v3

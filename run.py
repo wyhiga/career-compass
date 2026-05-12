@@ -32,18 +32,21 @@ def main():
     eval_results_file = run_all_evaluations(candidates_file)
     if not eval_results_file:
         print("[-] Error en Evaluation. Abortando.")
-        return
+        exit(1)
     
     # 3. Etapa de Composición (Composition)
     # Genera el email final en Markdown.
     print("\n[+] Componiendo el briefing final...")
     email_file = compose_email(eval_results_file)
     
-    if email_file:
-        print(f"\n{'='*40}")
-        print(f" ¡Ejecución completada con éxito!")
-        print(f" Reporte final: {email_file}")
-        print(f"{'='*40}\n")
+    if not email_file:
+        print("[-] Error en Composition. Abortando.")
+        exit(1)
+    
+    print(f"\n{'='*40}")
+    print(f" ¡Ejecución completada con éxito!")
+    print(f" Reporte final: {email_file}")
+    print(f"{'='*40}\n")
 
 if __name__ == "__main__":
     main()
