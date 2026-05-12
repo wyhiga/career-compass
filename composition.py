@@ -26,24 +26,26 @@ def call_composition_api(prompt):
     )
 
 def format_company_block(e):
-    # Format sources as [1], [2], [3] to keep it clean
+    # Format sources as simple [Fuente] labels to hide long URLs
     sources_md = []
     for i, s in enumerate(e.get("sources", []), 1):
-        sources_md.append(f"[[{i}]]({s})")
+        # Use a very standard Markdown link format
+        sources_md.append(f"[Fuente {i}]({s})")
     
-    sources_line = " · ".join(sources_md) if sources_md else "None"
+    sources_line = " | ".join(sources_md) if sources_md else "No hay fuentes disponibles"
     
     return f"""
-### 🏢 {e.get('company_name')}
-**{e.get('hq_country')}** · *{e.get('industry_primary')}* · **Tier {e.get('asia_tier')}** · {e.get('company_size')}
+### 🏢 {e.get('company_name').upper()}
+**Sede:** {e.get('hq_country')} | **Industria:** {e.get('industry_primary')} | **Tier:** {e.get('asia_tier')}
 
-> **Why it fits:** {e.get('why_it_fits')}
+> **¿Por qué encaja?**
+> {e.get('why_it_fits')}
 
-- **Confidence:** {e.get('confidence')} ({e.get('confidence_reason')})
-- **Likely Roles:** `{", ".join(e.get('role_archetypes_likely', []))}`
-- **Key Action:** {e.get('suggested_next_action')}
-- **Sources:** {sources_line}
-{f"- **⚠️ Flags:** {', '.join(e.get('flags'))}" if e.get('flags') else ""}
+*   **🎯 Roles Probables:** `{", ".join(e.get('role_archetypes_likely', []))}`
+*   **💡 Acción Sugerida:** {e.get('suggested_next_action')}
+*   **✅ Confianza:** {e.get('confidence')} — *{e.get('confidence_reason')}*
+*   **🔗 Enlaces:** {sources_line}
+{f"*   **⚠️ Notas:** {', '.join(e.get('flags'))}" if e.get('flags') else ""}
 
 ---
 """
@@ -94,7 +96,7 @@ def compose_email(evaluations_file):
         # 4. Assemble Final Email
         final_email = f"""# 🧭 Career Compass — {today}
 
-[📊 Ver Dashboard Visual](https://wyhiga.github.io/career-compass/)
+[📊 Ver Dashboard Visual](https://wyhiga.github.io/career-compass/dashboard/)
 
 {lede_text}
 
