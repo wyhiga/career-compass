@@ -41,7 +41,7 @@ Why discovery flagged this: [WHY_CANDIDATE]
 RESEARCH PROCESS - REQUIRED:
 ==================================================================
 
-Conduct 4-6 web searches to gather evidence. You should explicitly
+Conduct 2-3 quick web searches to gather key evidence. You should explicitly
 investigate:
 
 1. Does the company have a Japan entity? (search for "{company} Japan
@@ -58,7 +58,7 @@ investigate:
    activity? (search for recent press releases, executive statements,
    trade show appearances, or hiring news)
 
-5. Who are the key people? (search for LinkedIn profiles of Hiring Managers, Talent Acquisition leads, Country Managers, or Founders in Japan/APAC)
+5. (Optional) Quick check for LinkedIn presence in Japan.
 
 6. Are there any disqualifying signals? (active major scandals,
    significant downsizing, industry-specific issues)
@@ -109,7 +109,7 @@ Return a single JSON object. ALL fields required.
   "company_size": "Large | Mid | Small",
   "employee_count_estimate": 1234,
 
-  "why_it_fits": "4-6 sentences. Provide DEEP, highly relevant context. Must cite at least one concrete recent piece of evidence. Address: why this company specifically (not generic), what specific LatAm/Spanish connection they have in Japan, why now (recent signal), and exactly how Wendy's commercial and multi-industry profile fits (her specific edge here). Be thorough and specific.",
+  "why_it_fits": "2-3 sentences. Summarize why this company fits Wendy's profile and its LatAm/Spanish connection in Japan.",
 
   "confidence": "High | Medium | Low",
   "confidence_reason": "1-2 sentences explaining why this confidence level. For High: cite the strongest evidence. For Low: name what you couldn't verify.",
@@ -122,7 +122,7 @@ Return a single JSON object. ALL fields required.
     "Soft disqualifiers or caveats. Empty array if none."
   ],
 
-  "suggested_next_action": "ONE specific action, under 30 min effort. MUST include the name, role, and direct LinkedIn URL of a key contact (e.g. 'Message [Name], [Role] at [LinkedIn URL]'). BANNED: 'research further', 'monitor for openings', 'keep an eye on', 'consider reaching out', any vague guidance.",
+  "suggested_next_action": "ONE specific action, under 5 min effort. e.g. 'Search for the HR Lead on LinkedIn' or 'Check their Japan career page'. No specific contact names required.",
 
   "sources": [
     "https://... — full URLs of pages you actually read. Min 2 for High confidence, 1 for Medium/Low."

@@ -17,7 +17,7 @@ if not GOOGLE_API_KEY:
 
 client = genai.Client(api_key=GOOGLE_API_KEY)
 
-@retry(stop=stop_after_attempt(5), wait=wait_exponential(multiplier=1, min=10, max=60))
+@retry(stop=stop_after_attempt(2), wait=wait_exponential(multiplier=1, min=5, max=20))
 def call_evaluation_api(prompt):
     return client.models.generate_content(
         model='gemini-2.5-flash',

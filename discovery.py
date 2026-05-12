@@ -93,7 +93,7 @@ def run_discovery():
     count = already_surfaced.count(',') + 1 if 'None' not in already_surfaced else 0
     print(f"\n[+] Starting Discovery stage...")
     print(f"    Memory: Skipping {count} companies already evaluated in previous runs.")
-    print(f"    Target: Finding 10-15 new candidate companies.")
+    print(f"    Target: Finding 8-10 new candidate companies.")
     
     try:
         # We enforce JSON output in the prompt, but we can also set the response_mime_type
