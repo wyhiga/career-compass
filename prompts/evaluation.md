@@ -109,7 +109,7 @@ Return a single JSON object. ALL fields required.
   "company_size": "Large | Mid | Small",
   "employee_count_estimate": 1234,
 
-  "why_it_fits": "4-6 sentences. Provide deep context. Address: why this company specifically, their LatAm/Spanish connection in Japan, and exactly how Wendy's commercial profile fits.",
+  "why_it_fits": "4-6 sentences. BANNED: 'Matches CV', 'Wendy has experience', 'Good fit for her background'. REQUIRED: (1) Describe the company's business model and unique value proposition in Japan. (2) Explain exactly how Wendy can contribute value using her specific languages and industry knowledge to solve a business problem (e.g., 'Helping [Company] bridge the gap with Spanish food suppliers' or 'Scaling their shipping operations in APAC using her N2 Japanese'). Be precise, not generic.",
 
   "confidence": "High | Medium | Low",
   "confidence_reason": "1-2 sentences explaining why this confidence level. For High: cite the strongest evidence. For Low: name what you couldn't verify.",
@@ -122,7 +122,7 @@ Return a single JSON object. ALL fields required.
     "Soft disqualifiers or caveats. Empty array if none."
   ],
 
-  "suggested_next_action": "ONE specific action. Try to include the name, role, and direct LinkedIn URL of a key contact if found (e.g. 'Message [Name], [Role] at [LinkedIn URL]'). If no specific person is found, suggest a concrete recruitment lead.",
+  "suggested_next_action": "ONE specific, high-value action. BANNED: 'Search on LinkedIn for HR', 'Check website'. REQUIRED: Name a specific department (e.g. 'Partnerships', 'Supply Chain'), or a specific project mentioned in news, or the name/role of a real person found in research. If no person is found, suggest a specific message angle related to their recent news.",
 
   "sources": [
     "https://... — full URLs of pages you actually read. Min 2 for High confidence, 1 for Medium/Low."
