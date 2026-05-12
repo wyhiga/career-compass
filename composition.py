@@ -61,19 +61,9 @@ def compose_email(evaluations_file):
     print(f"Composing final email (Filtered input: {len(final_prompt)} chars)...")
     
     try:
-        # Use more relaxed safety settings to prevent hangs on company names/industries
-        from google.genai import types
         response = client.models.generate_content(
             model='gemini-2.5-flash',
-            contents=final_prompt,
-            config=types.GenerateContentConfig(
-                safety_settings=[
-                    types.SafetySetting(category="HATE_SPEECH", threshold="BLOCK_NONE"),
-                    types.SafetySetting(category="HARASSMENT", threshold="BLOCK_NONE"),
-                    types.SafetySetting(category="SEXUALLY_EXPLICIT", threshold="BLOCK_NONE"),
-                    types.SafetySetting(category="DANGEROUS_CONTENT", threshold="BLOCK_NONE"),
-                ]
-            )
+            contents=final_prompt
         )
         print("[+] Received response from Gemini.")
         email_content = response.text
