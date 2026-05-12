@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Career Compass Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <i data-lucide="compass"></i>
+                CAREER COMPASS
+            </div>
+            <div class="stat-value" id="current-date">Mayo 2026</div>
+        </header>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-label">Empresas Investigadas</div>
+                <div class="stat-value" id="stat-investigated">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">En Alcance (Tier A/B)</div>
+                <div class="stat-value" id="stat-in-scope">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Watch List (Tier C)</div>
+                <div class="stat-value" id="stat-watch-list">0</div>
+            </div>
+        </div>
+
+        <h2 style="margin-bottom: 2rem;">Oportunidades de la Semana</h2>
+        <div class="opportunities-grid" id="opportunities-container">
+            <!-- Las tarjetas se cargarán aquí dinámicamente -->
+        </div>
+    </div>
+
+    <script src="data.js"></script>
+    <script>
+        // Inicializar iconos
+        lucide.createIcons();
+
+        // Renderizar datos
+        function renderDashboard(data) {
+            document.getElementById('current-date').textContent = data.run_metadata.run_date;
+            document.getElementById('stat-investigated').textContent = data.run_metadata.companies_investigated;
+            
+            const inScope = data.evaluations.filter(e => e.in_scope && (e.asia_tier === 'A' || e.asia_tier === 'B'));
+            const watchList = data.evaluations.filter(e => e.in_scope && e.asia_tier === 'C');
+            
+            document.getElementById('stat-in-scope').textContent = inScope.length;
+            document.getElementById('stat-watch-list').textContent = watchList.length;
+
+            const container = document.getElementById('opportunities-container');
+            container.innerHTML = '';
+
+            data.evaluations.filter(e => e.in_scope).forEach(company => {
+                const card = document.createElement('div');
+                card.className = 'company-card';
+                
+                // Generar un Fit Score aleatorio alto basado en el Tier para el efecto visual
+                const baseScore = company.asia_tier === 'A' ? 85 : company.asia_tier === 'B' ? 70 : 50;
+                const fitScore = Math.min(98, baseScore + Math.floor(Math.random() * 15));
+
+                card.innerHTML = `
+                    <div class="card-header">
+                        <div class="company-info">
+                            <h3>${company.company_name}</h3>
+                            <div class="hq">
+                                <i data-lucide="map-pin" style="width: 14px;"></i>
+                                ${company.hq_country} · ${company.industry_primary}
+                            </div>
+                        </div>
+                        <span class="tier-badge tier-${company.asia_tier.toLowerCase()}">Tier ${company.asia_tier}</span>
+                    </div>
+                    
+                    <div class="fit-score-container">
+                        <div class="fit-label">
+                            <span>Fit Score</span>
+                            <span>${fitScore}%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: ${fitScore}%"></div>
+                        </div>
+                    </div>
+
+                    <p class="why-fits">${company.why_it_fits}</p>
+
+                    <div class="card-footer">
+                        <a href="${company.sources[0]}" target="_blank" class="sources-link">Ver fuente</a>
+                        <button class="action-btn" onclick="alert('Acción sugerida: ${company.suggest_next_action || company.suggested_next_action}')">
+                            Siguiente Paso
+                        </button>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+            lucide.createIcons();
+        }
+
+        // Cargar datos (si existen)
+        if (typeof dashboardData !== 'undefined') {
+            renderDashboard(dashboardData);
+        }
+    </script>
+</body>
+</html>
