@@ -17,8 +17,9 @@ if not GOOGLE_API_KEY:
 
 client = genai.Client(api_key=GOOGLE_API_KEY)
 
-@retry(stop=stop_after_attempt(5), wait=wait_exponential(multiplier=1, min=10, max=60))
+@retry(stop=stop_after_attempt(2), wait=wait_exponential(multiplier=1, min=5, max=20))
 def call_composition_api(prompt):
+    print(f"[*] Calling Gemini for email composition (Input size: {len(prompt)} chars)...")
     return client.models.generate_content(
         model='gemini-2.5-flash',
         contents=prompt
@@ -57,6 +58,7 @@ def compose_email(evaluations_file):
     
     try:
         response = call_composition_api(final_prompt)
+        print("[+] Received response from Gemini.")
         email_content = response.text
         
         output_path = Path(f"outputs/email_{today}.md")
