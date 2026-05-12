@@ -11,6 +11,7 @@ from composition import compose_email
 load_dotenv()
 
 def main():
+    print("[*] Script started. Initializing...")
     today = date.today().isoformat()
     print(f"\n{'='*40}")
     print(f" Career Compass Run: {today}")
