@@ -44,7 +44,7 @@ def format_company_block(e):
 *   **🎯 Roles Probables:** `{", ".join(e.get('role_archetypes_likely', []))}`
 *   **💡 Acción Sugerida:** {e.get('suggested_next_action')}
 *   **✅ Confianza:** {e.get('confidence')} — *{e.get('confidence_reason')}*
-*   **🔗 Enlaces:** {sources_line}
+*   **🔗 Enlaces:** {f"[Ver fuentes de investigación]({e.get('sources')[0]})" if e.get('sources') else "No hay fuentes disponibles"}
 {f"*   **⚠️ Notas:** {', '.join(e.get('flags'))}" if e.get('flags') else ""}
 
 ---

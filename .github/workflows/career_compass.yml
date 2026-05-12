@@ -48,6 +48,11 @@ jobs:
           fi
           echo "FILE_PATH=$LATEST_FILE" >> $GITHUB_ENV
 
+      - name: Convert Markdown to HTML
+        run: |
+          pip install markdown
+          python -c "import markdown; import os; content = open(os.environ['FILE_PATH']).read(); html = markdown.markdown(content); open('outputs/email.html', 'w').write(html)"
+
       - name: Send Email Notification
         uses: dawidd6/action-send-mail@v3
         with:
@@ -59,5 +64,4 @@ jobs:
           subject: Career Compass - Tu Reporte Semanal
           to: ${{ secrets.EMAIL_USERNAME }}
           from: Career Compass Agent
-          body: file://${{ env.FILE_PATH }}
-
+          html_body: file://outputs/email.html
