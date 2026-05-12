@@ -45,13 +45,43 @@ def extract_json(text):
             return json.loads(text[start:end+1])
         raise
 
+def get_already_surfaced_companies():
+    """Scans data/runs for previous candidates and evaluations to avoid repetition."""
+    surfaced = set()
+    runs_dir = Path("data/runs")
+    if not runs_dir.exists():
+        return "None (Initial Run)"
+    
+    for file in runs_dir.glob("*.json"):
+        try:
+            with open(file, "r") as f:
+                data = json.load(f)
+                # If it's a list of candidates or evaluations
+                if isinstance(data, list):
+                    for item in data:
+                        name = item.get("company_name")
+                        if name:
+                            surfaced.add(name)
+                # If it's the structured dashboard data
+                elif isinstance(data, dict) and "evaluations" in data:
+                    for item in data["evaluations"]:
+                        name = item.get("company_name")
+                        if name:
+                            surfaced.add(name)
+        except Exception:
+            continue
+            
+    if not surfaced:
+        return "None (Initial Run)"
+    
+    return ", ".join(sorted(list(surfaced)))
+
 def run_discovery():
     discovery_prompt_path = Path("prompts/discovery.md")
     exclusions_path = Path("reference/excluded_companies.md")
     
-    # In v1, we don't have a full companies.csv yet, so we'll use an empty list or placeholders
-    # as described in the design doc for Stage 1.
-    already_surfaced = "None (Week 1)"
+    # NEW: Fetch already surfaced companies from history
+    already_surfaced = get_already_surfaced_companies()
     
     discovery_template = discovery_prompt_path.read_text()
     exclusions_text = exclusions_path.read_text()
@@ -60,7 +90,7 @@ def run_discovery():
     final_prompt = discovery_template.replace("[ALREADY_SURFACED]", already_surfaced)
     final_prompt = final_prompt.replace("[EXCLUDED_COMPANIES]", exclusions_text)
     
-    print("Starting Discovery stage...")
+    print(f"Starting Discovery stage... (Excluding {already_surfaced.count(',') + 1 if 'None' not in already_surfaced else 0} known companies)")
     
     try:
         # We enforce JSON output in the prompt, but we can also set the response_mime_type
