@@ -90,7 +90,10 @@ def run_discovery():
     final_prompt = discovery_template.replace("[ALREADY_SURFACED]", already_surfaced)
     final_prompt = final_prompt.replace("[EXCLUDED_COMPANIES]", exclusions_text)
     
-    print(f"Starting Discovery stage... (Excluding {already_surfaced.count(',') + 1 if 'None' not in already_surfaced else 0} known companies)")
+    count = already_surfaced.count(',') + 1 if 'None' not in already_surfaced else 0
+    print(f"\n[+] Starting Discovery stage...")
+    print(f"    Memory: Skipping {count} companies already evaluated in previous runs.")
+    print(f"    Target: Finding 10-15 new candidate companies.")
     
     try:
         # We enforce JSON output in the prompt, but we can also set the response_mime_type

@@ -60,7 +60,6 @@ def evaluate_company(candidate):
     final_prompt = final_prompt.replace("[HQ_COUNTRY_GUESS]", candidate["hq_country_guess"])
     final_prompt = final_prompt.replace("[WHY_CANDIDATE]", candidate["why_candidate"])
     
-    print(f"Evaluating {candidate['company_name']}...")
     
     try:
         response = call_evaluation_api(final_prompt)
@@ -79,7 +78,8 @@ def run_all_evaluations(candidates_file):
     results = []
     
     # Process one by one to avoid quota issues
-    for candidate in candidates:
+    for i, candidate in enumerate(candidates):
+        print(f"\n[{i+1}/{len(candidates)}] Evaluating {candidate['company_name']}...")
         result = evaluate_company(candidate)
         if result:
             results.append(result)
