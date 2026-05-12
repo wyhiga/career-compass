@@ -30,7 +30,8 @@ jobs:
         run: |
           git config --global user.name "Career Compass Bot"
           git config --global user.email "bot@careercompass.ai"
-          git add --ignore-unmatch data/ outputs/ dashboard/data.js
+          mkdir -p data/runs outputs
+          git add -A
           git diff --quiet && git diff --staged --quiet || git commit -m "Automated Career Compass Run [skip ci]"
           git push || echo "Nothing new to push."
 
