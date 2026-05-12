@@ -82,6 +82,23 @@ def run_all_evaluations(candidates_file):
     
     print(f"\n[+] Starting parallel evaluation of {total} companies (Max 5 at a time)...")
     
+    # Save results
+    output_dir = Path("data/runs")
+    output_dir.mkdir(parents=True, exist_ok=True)
+    from datetime import date
+    today = date.today().isoformat()
+    results_file = output_dir / f"evaluations_{today}.json"
+    
+    if not candidates:
+        print("No new candidates to evaluate.")
+        if results_file.exists():
+            print(f"Found existing evaluations for today: {results_file}")
+            return results_file
+        else:
+            print("No existing evaluations found for today.")
+            return None
+
+    results = []
     # Process in parallel using a ThreadPoolExecutor
     with ThreadPoolExecutor(max_workers=5) as executor:
         # Create a mapping of future to candidate name for logging
@@ -100,12 +117,6 @@ def run_all_evaluations(candidates_file):
             completed += 1
             print(f"[{completed}/{total}] Finished evaluation for {company_name}")
             
-    # Save results
-    output_dir = Path("data/runs")
-    from datetime import date
-    today = date.today().isoformat()
-    results_file = output_dir / f"evaluations_{today}.json"
-    
     with open(results_file, "w") as f:
         json.dump(results, f, indent=2)
         
