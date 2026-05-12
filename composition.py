@@ -26,26 +26,24 @@ def call_composition_api(prompt):
     )
 
 def format_company_block(e):
+    # Format sources as [1], [2], [3] to keep it clean
     sources_md = []
-    for s in e.get("sources", []):
-        sources_md.append(f"[{s}]({s})")
+    for i, s in enumerate(e.get("sources", []), 1):
+        sources_md.append(f"[[{i}]]({s})")
+    
+    sources_line = " · ".join(sources_md) if sources_md else "None"
     
     return f"""
----
+### 🏢 {e.get('company_name')}
+**{e.get('hq_country')}** · *{e.get('industry_primary')}* · **Tier {e.get('asia_tier')}** · {e.get('company_size')}
 
-**{e.get('company_name')}** — {e.get('hq_country')} · {e.get('industry_primary')} · Tier {e.get('asia_tier')} · {e.get('company_size')}
+> **Why it fits:** {e.get('why_it_fits')}
 
-**Why it fits:** {e.get('why_it_fits')}
-
-**Confidence:** {e.get('confidence')} — {e.get('confidence_reason')}
-
-**Role archetypes likely present:** {", ".join(e.get('role_archetypes_likely', []))}
-
-**Flags:** {", ".join(e.get('flags', [])) if e.get('flags') else "None"}
-
-**Suggested next action:** {e.get('suggested_next_action')}
-
-**Sources:** {", ".join(sources_md)}
+- **Confidence:** {e.get('confidence')} ({e.get('confidence_reason')})
+- **Likely Roles:** `{", ".join(e.get('role_archetypes_likely', []))}`
+- **Key Action:** {e.get('suggested_next_action')}
+- **Sources:** {sources_line}
+{f"- **⚠️ Flags:** {', '.join(e.get('flags'))}" if e.get('flags') else ""}
 
 ---
 """
@@ -88,26 +86,28 @@ def compose_email(evaluations_file):
         
         notes_input = notes_prompt_template.replace("[TOTAL]", str(len(evaluations)))
         notes_input = notes_input.replace("[EXCLUDED_COUNT]", str(out_of_scope_count))
-        notes_input = notes_input.replace("[GAPS_TEXT]", "\n".join(all_gaps[:10])) # Cap to avoid long prompts
+        notes_input = notes_input.replace("[GAPS_TEXT]", "\n".join(all_gaps[:10]))
         
         notes_response = client.models.generate_content(model='gemini-2.5-flash', contents=notes_input)
         notes_text = notes_response.text
         
         # 4. Assemble Final Email
-        final_email = f"""# Career Compass — Week of {today}
+        final_email = f"""# 🧭 Career Compass — {today}
+
+[📊 Ver Dashboard Visual](https://wyhiga.github.io/career-compass/)
 
 {lede_text}
 
-## In-Scope Opportunities (Tier A & B)
-{in_scope_html if in_scope else "No new Tier A or B companies found this week."}
+## 🚀 Oportunidades Destacadas (Tier A & B)
+{in_scope_html if in_scope else "_No se encontraron nuevas empresas Tier A o B esta semana._"}
 
-## Watch List (Tier C)
-{watch_list_html if watch_list else "No Tier C companies this week."}
+## 🔍 Watch List (Tier C)
+{watch_list_html if watch_list else "_No hay empresas en la lista de seguimiento esta semana._"}
 
 {notes_text}
 
 ---
-Full evaluation data for this run is saved in `data/runs/evaluations_{today}.json`
+_Este es un reporte automatizado generado por tu agente de Career Compass. Los datos completos están en tu repositorio._
 """
         
         output_path = Path(f"outputs/email_{today}.md")
