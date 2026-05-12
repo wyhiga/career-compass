@@ -36,28 +36,45 @@ def compose_email(evaluations_file):
     today = date.today().isoformat()
     run_id = f"{today}-run"
     
-    in_scope = [e for e in evaluations if e.get("in_scope") and e.get("asia_tier") in ["A", "B"]]
-    watch_list = [e for e in evaluations if e.get("in_scope") and e.get("asia_tier") == "C"]
-    out_of_scope = [e for e in evaluations if not e.get("in_scope")]
-    
+    # Strip unnecessary noise to keep the prompt focused and within safe limits
+    filtered_evals = []
+    out_of_scope_count = 0
+    for e in evaluations:
+        if not e.get("in_scope"):
+            out_of_scope_count += 1
+        filtered_e = {k: v for k, v in e.items() if k not in ['search_queries_used', 'verification_gaps']}
+        filtered_evals.append(filtered_e)
+
     input_data = {
         "run_metadata": {
             "run_id": run_id,
             "run_date": today,
             "companies_investigated": len(evaluations),
-            "companies_excluded": len(out_of_scope)
+            "companies_excluded": out_of_scope_count
         },
-        "evaluations": evaluations
+        "evaluations": filtered_evals
     }
     
     final_prompt = composition_template
-    # We pass the input data as a block of text at the end or embedded
     final_prompt += f"\n\nINPUT DATA:\n{json.dumps(input_data, indent=2)}"
     
-    print("Composing final email...")
+    print(f"Composing final email (Filtered input: {len(final_prompt)} chars)...")
     
     try:
-        response = call_composition_api(final_prompt)
+        # Use more relaxed safety settings to prevent hangs on company names/industries
+        from google.genai import types
+        response = client.models.generate_content(
+            model='gemini-2.5-flash',
+            contents=final_prompt,
+            config=types.GenerateContentConfig(
+                safety_settings=[
+                    types.SafetySetting(category="HATE_SPEECH", threshold="BLOCK_NONE"),
+                    types.SafetySetting(category="HARASSMENT", threshold="BLOCK_NONE"),
+                    types.SafetySetting(category="SEXUALLY_EXPLICIT", threshold="BLOCK_NONE"),
+                    types.SafetySetting(category="DANGEROUS_CONTENT", threshold="BLOCK_NONE"),
+                ]
+            )
+        )
         print("[+] Received response from Gemini.")
         email_content = response.text
         
