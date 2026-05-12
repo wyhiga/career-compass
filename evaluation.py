@@ -99,6 +99,15 @@ def run_all_evaluations(candidates_file):
             return None
 
     results = []
+    # Load existing results for today if they exist
+    if results_file.exists():
+        try:
+            with open(results_file, "r") as f:
+                results = json.load(f)
+            print(f"Loaded {len(results)} existing results for today.")
+        except:
+            results = []
+
     # Process in parallel using a ThreadPoolExecutor
     with ThreadPoolExecutor(max_workers=5) as executor:
         # Create a mapping of future to candidate name for logging
