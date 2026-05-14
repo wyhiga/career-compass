@@ -16,3 +16,6 @@ outputs/
 
 # Claude Code local settings
 .claude/
+
+# Local email output samples
+email_output_sample*.rtf
