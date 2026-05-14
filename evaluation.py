@@ -96,8 +96,9 @@ def validate_evaluation_schema(evaluation):
         elif isinstance(value, str) and not value.strip():
             missing.append(field)
         elif isinstance(value, list) and len(value) == 0 and field in ("role_archetypes_likely", "sources"):
-            # Empty role list or sources list = unusable evaluation
-            missing.append(field)
+            # Empty list is only a problem for in-scope companies
+            if evaluation.get("in_scope") is True:
+                missing.append(field)
 
     return len(missing) == 0, missing
 
