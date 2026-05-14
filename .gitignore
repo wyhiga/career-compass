@@ -13,3 +13,6 @@ venv/
 
 # Outputs (optional — remove this line if you want to track outputs in git)
 outputs/
+
+# Claude Code local settings
+.claude/
