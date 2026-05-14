@@ -108,7 +108,26 @@ Return a single JSON object. ALL fields required.
   "company_size": "Large | Mid | Small",
   "employee_count_estimate": 1234,
 
-  "why_it_fits": "Max 3-4 sentences. STRICTLY PROHIBITED: Mentioning Wendy's CV, experience, language skills (Japanese/Spanish), or cultural nuances. I already know her background. REQUIRED: Focus 100% on the company's specific business model in Japan and a concrete commercial opportunity. Example: '[Company] is struggling to compete with Rakuten in the organic sector; your expertise in LatAm sourcing could lower their costs.' Be a business consultant, not a recruiter.",
+  "why_it_fits": "Max 3-4 sentences IN SPANISH. This field describes the COMPANY'S situation in Japan — not the candidate's qualifications. The test: this paragraph should be useful as company analysis even if Wendy did not exist. If it only makes sense as a pitch TO her, you have written the wrong thing.
+
+REQUIRED CONTENT:
+- The specific business problem or opportunity this company has in Japan RIGHT NOW. Cite a concrete signal from your research: a recent product launch, partnership, executive hire, market entry, regulatory event, competitor move, trade show appearance, or financial result. Name it specifically.
+- Why this problem is non-trivial — what makes it hard, contested, or interesting commercially.
+- One concrete commercial lever someone in a commercial role at this company could pull. Describe the lever, not the candidate.
+
+STRICTLY PROHIBITED:
+- Any mention of the candidate. No 'your experience', no 'you could', no 'someone with your background', no 'a candidate like you'.
+- Generic role-shopping language. No 'opportunity for sales roles', 'need for commercial talent', 'looking for business development professionals', 'positions in marketing'.
+- Vague claims unsupported by a specific signal you found in search. No 'expanding in Asia', 'strong presence in Japan', 'growing market', 'increasing focus on the region'.
+- The word 'opportunity' as a generic stand-in. If you write 'opportunity', it must attach to a specific named project, account, or business problem.
+
+GOOD EXAMPLE (consultant voice — write like this):
+'Gestamp Japan opera una planta de hot stamping en Yokohama que abastece a Toyota y Honda, y en mayo de 2025 mostró su solución Ges-Gigastamping® para arquitecturas de vehículo eléctrico en el Automotive Engineering Exposition de Yokohama. Su alianza con Mitsui & Co. les da representación a nivel de consejo pero no fuerza comercial en cuentas OEM japonesas. El reto comercial real es traducir el acceso vía Mitsui en contratos de programa con los equipos de compras de Toyota, Honda y Nissan para las plataformas EV de 2026-2027.'
+
+BAD EXAMPLE — do NOT write like this:
+'Gestamp ofrece una excelente oportunidad para profesionales comerciales con experiencia automotriz, aprovechando su sólida presencia en Japón y su enfoque en crecimiento estratégico en la región Asia-Pacífico.'
+
+The difference: the good example would be useful to anyone analyzing Gestamp's Japan business. The bad example is a job-board paragraph that could describe any company.",
 
   "confidence": "High | Medium | Low",
   "confidence_reason": "1-2 sentences explaining why this confidence level.",
