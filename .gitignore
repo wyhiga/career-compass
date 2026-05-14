@@ -14,6 +14,9 @@ venv/
 # Outputs (optional — remove this line if you want to track outputs in git)
 outputs/
 
+# Runtime artifacts
+data/runs/
+
 # Claude Code local settings
 .claude/
 
