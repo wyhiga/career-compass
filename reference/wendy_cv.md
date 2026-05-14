@@ -1,7 +1,7 @@
 # Wendy Yuri Higa — CV
 
 WENDY YURI HIGA
-Mobile: +81 70 3995 6222 | Email: higayuri86@gmail.com | Location: Tokyo, Japan | LinkedIn: www.linkedin.com/in/higayuri86
+Location: Tokyo, Japan | LinkedIn: www.linkedin.com/in/higayuri86
 Commercial and data-driven professional with experience across marketing, operations, pricing, and supply chain within
 multinational environments. Currently based in Tokyo, with background in B2B, cross-functional coordination, and negotiations
 across diverse industries. Proven ability to bridge strategy and execution at channel and customer level, supporting profitable
